@@ -77,7 +77,7 @@ print("Decrypted Message:", plaintext)
 
 Voici le résultat final après déchiffrement :
 
-![Decrypted Message](./Challenge/Crypto/Images/Very%20Easy/Images/image.png)
+![Decrypted Message](./Challenge/Crypto/Images/VeryEasy/Images/image.png)
 
 
 ### 🔍 Observations
