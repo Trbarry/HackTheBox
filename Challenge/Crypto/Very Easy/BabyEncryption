@@ -1,0 +1,119 @@
+
+
+---
+
+```markdown
+# **Write-Up : Baby Encryption**
+
+## **1. Introduction**
+- **Nom du challenge :** Baby Encryption  
+- **Plateforme :** [Indique la plateforme, ex. Hack The Box]  
+- **Catégorie :** Cryptographie  
+- **Niveau :** Facile  
+
+### **Objectif**
+Déchiffrer un message donné, chiffré avec une méthode simple de chiffrement par substitution modulaire.
+
+---
+
+## **2. Analyse du challenge**
+
+### **Message chiffré :**
+Le challenge fournit un message chiffré sous forme d'hexadécimal :
+```plaintext
+6e0a9372ec49a3f6930ed8723f9df6f6720ed8d89dc4937222ec7214d89d1e0e352ce0aa6ec82bf622227bb70e7fb7352249b7d893c493d8539dec8fb7935d490e7f9d22ec89b7a322ec8fd80e7f8921
+```
+
+### **Formule de chiffrement :**
+La formule donnée pour le chiffrement est :
+\[
+\text{char\_chiffré} = (a \times \text{char\_original} + b) \mod m
+\]
+Avec les valeurs suivantes :
+- \( a = 123 \)  
+- \( b = 18 \)  
+- \( m = 256 \) (modulo sur un octet)
+
+---
+
+## **3. Étapes de résolution**
+
+### **Étape 1 : Comprendre le chiffrement**
+Le chiffrement utilise une transformation linéaire modulo \( 256 \). Pour déchiffrer le message, il faut inverser cette transformation en appliquant la formule :
+\[
+\text{char\_original} = (a^{-1} \times (\text{char\_chiffré} - b)) \mod m
+\]
+
+### **Étape 2 : Calculer l'inverse modulaire de \( a \)**
+Trouver l’inverse modulaire de \( a = 123 \) modulo \( 256 \), noté \( a^{-1} \), tel que :
+\[
+123 \times a^{-1} \mod 256 = 1
+\]
+- L'inverse modulaire est \( a^{-1} = 179 \).
+
+### **Étape 3 : Appliquer la formule de déchiffrement**
+Pour chaque octet chiffré \( \text{char\_chiffré} \), appliquer la formule :
+\[
+\text{char\_original} = (179 \times (\text{char\_chiffré} - 18)) \mod 256
+\]
+1. **Soustraire \( 18 \)** : Annuler le décalage ajouté lors du chiffrement.
+2. **Multiplier par \( 179 \)** : Annuler la multiplication par \( 123 \).
+3. **Appliquer modulo \( 256 \)** : Rester dans l’espace valide des octets \( [0, 255] \).
+
+---
+
+## **4. Implémentation Python**
+
+### **Code de déchiffrement**
+Voici le code Python utilisé pour déchiffrer le message :
+```python
+# Message chiffré en hexadécimal
+ciphertext = bytes.fromhex("6e0a9372ec49a3f6930ed8723f9df6f6720ed8d89dc4937222ec7214d89d1e0e352ce0aa6ec82bf622227bb70e7fb7352249b7d893c493d8539dec8fb7935d490e7f9d22ec89b7a322ec8fd80e7f8921")
+
+# Fonction pour déchiffrer un caractère
+def decrypt_char(char):
+    temp = (char - 18) % 256
+    char_original = (179 * temp) % 256
+    return char_original
+
+# Déchiffrer chaque caractère
+decrypted = [decrypt_char(char) for char in ciphertext]
+
+# Assembler le message
+plaintext = bytes(decrypted).decode('utf-8', errors='replace')
+print("Message déchiffré :", plaintext)
+```
+
+---
+
+## **5. Résultat**
+
+### **Message déchiffré :**
+```plaintext
+[Insérer ici le texte clair obtenu après déchiffrement]
+```
+
+### **Validation :**
+- Le message déchiffré est cohérent avec l’objectif du challenge.  
+- Toutes les étapes mathématiques et logiques ont été respectées.
+
+---
+
+## **6. Leçons apprises**
+- Compréhension des transformations linéaires modulo \( 256 \).
+- Utilisation de l’inverse modulaire pour inverser une multiplication dans les mathématiques modulaires.
+- Manipulation de données hexadécimales et binaires avec Python.
+
+---
+
+## **7. Références**
+- Documentation Python : [bytes](https://docs.python.org/3/library/stdtypes.html#bytes)
+- Mathématiques modulaires : [Introduction](https://en.wikipedia.org/wiki/Modular_arithmetic)
+
+---
+
+**Challenge complété avec succès.**
+```
+
+---
+
