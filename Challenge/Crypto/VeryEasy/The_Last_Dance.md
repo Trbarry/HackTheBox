@@ -1,120 +1,149 @@
+```markdown
+# The Last Dance - Write-Up
 
-
-### **1. Contexte**
-Le challenge nous fournit un fichier `out.txt` contenant trois informations :
-- **Nonce** : La valeur unique utilisée pour le chiffrement avec ChaCha20.
-- **Message chiffré** : Un texte intercepté par les agents.
-- **FLAG chiffré** : La valeur que nous devons déchiffrer pour obtenir le FLAG.
-
-### **2. Objectif**
-Utiliser le texte clair connu (**plaintext**) pour reconstituer la clé de flux (**keystream**) et déchiffrer le FLAG.
+## Challenge Overview
+- **Challenge Name:** The Last Dance  
+- **Category:** Cryptography  
+- **Difficulty:** Medium  
+- **Objective:** Decrypt a flag encrypted using the ChaCha20 stream cipher.
 
 ---
 
-### **Données**
+## Challenge Details
 
-#### **Fichier `out.txt` :**
+### Ciphertext
+The encrypted data is provided in a file `out.txt` containing three elements:
+1. **Nonce**: A unique value used during encryption.
+2. **Encrypted Message**: A ciphertext corresponding to a known plaintext message.
+3. **Encrypted Flag**: The ciphertext for the hidden flag.
+
+Contents of `out.txt`:
 ```
-Nonce : c4a66edfe80227b4fa24d431
-Message chiffré : 7aa34395a258f5893e3db1822139b8c1f04cfab9d757b9b9cca57e1df33d093f07c7f06e06bb6293676f9060a838ea138b6bc9f20b08afeb73120506e2ce7b9b9dcd9e4a421584cfaba2481132dfbdf4216e98e3facec9ba199ca3a97641e9ca9782868d0222a1d7c0d3119b867edaf2e72e2a6f7d344df39a14edc39cb6f960944ddac2aaef324827c36cba67dcb76b22119b43881a3f1262752990
-FLAG chiffré : 7d8273ceb459e4d4386df4e32e1aecc1aa7aaafda50cb982f6c62623cf6b29693d86b15457aa76ac7e2eef6cf814ae3a8d39c7
+Nonce: c4a66edfe80227b4fa24d431
+Encrypted Message: 7aa34395a258f5893e3db1822139b8c1f04cfab9d757b9b9cca57e1df33d093f07c7f06e06bb6293676f9060a838ea138b6bc9f20b08afeb73120506e2ce7b9b9dcd9e4a421584cfaba2481132dfbdf4216e98e3facec9ba199ca3a97641e9ca9782868d0222a1d7c0d3119b867edaf2e72e2a6f7d344df39a14edc39cb6f960944ddac2aaef324827c36cba67dcb76b22119b43881a3f1262752990
+Encrypted Flag: 7d8273ceb459e4d4386df4e32e1aecc1aa7aaafda50cb982f6c62623cf6b29693d86b15457aa76ac7e2eef6cf814ae3a8d39c7
 ```
 
-#### **Texte clair connu :**
+### Encryption Method
+The ChaCha20 stream cipher is used, where:
 ```plaintext
-"Our counter agencies have intercepted your messages and a lot of your agent's identities have been exposed. In a matter of days all of them will be captured"
+Ciphertext = Plaintext XOR Keystream
+```
+To decrypt:
+```plaintext
+Plaintext = Ciphertext XOR Keystream
 ```
 
 ---
 
-### **3. Analyse**
-Le chiffrement utilise **ChaCha20**, où chaque octet du message clair est combiné avec la clé de flux via un XOR :
-\[
-\text{Ciphertext} = \text{Plaintext} \oplus \text{Keystream}
-\]
+## Decryption Process
 
-Avec un texte clair connu, nous pouvons reconstituer la clé de flux en appliquant l’opération inverse :
-\[
-\text{Keystream} = \text{Ciphertext} \oplus \text{Plaintext}
-\]
+### Step 1: Reconstitute the Keystream
+Using the known plaintext and its corresponding ciphertext, the keystream can be calculated:
+```plaintext
+Keystream = Plaintext XOR Ciphertext
+```
 
-Une fois la clé de flux reconstituée, nous l’utilisons pour déchiffrer le FLAG :
-\[
-\text{Plaintext FLAG} = \text{Ciphertext FLAG} \oplus \text{Keystream}
-\]
+### Step 2: Decrypt the Flag
+With the keystream reconstituted, decrypt the flag by applying the reverse operation:
+```plaintext
+Plaintext Flag = Encrypted Flag XOR Keystream
+```
 
 ---
 
-### **4. Étapes**
-1. Charger et extraire les données de `out.txt` (nonce, message chiffré, FLAG chiffré).
-2. Reconstituer la clé de flux en appliquant un XOR entre le texte clair connu et le message chiffré.
-3. Déchiffrer le FLAG avec la clé de flux.
+## Python Implementation
 
----
-
-## **Code Python**
-
-Voici le script complet utilisé pour résoudre le challenge :
+The following Python script performs the decryption:
 
 ```python
-# Charger les données depuis out.txt
+# Load data from out.txt
 with open("out.txt", "r") as f:
     lines = f.readlines()
 
-# Extraire les valeurs
+# Extract values
 nonce = bytes.fromhex(lines[0].strip())
 ciphertext_message = bytes.fromhex(lines[1].strip())
 ciphertext_flag = bytes.fromhex(lines[2].strip())
 
-# Texte clair connu
+# Known plaintext message
 plaintext_message = b"Our counter agencies have intercepted your messages and a lot "
 plaintext_message += b"of your agent's identities have been exposed. In a matter of "
 plaintext_message += b"days all of them will be captured"
 
-# Reconstituer la clé de flux
+# Reconstitute the keystream
 keystream = bytes([p ^ c for p, c in zip(plaintext_message, ciphertext_message)])
 
-# Déchiffrer le FLAG avec la clé de flux
+# Decrypt the flag
 flag = bytes([c ^ k for c, k in zip(ciphertext_flag, keystream)])
 
-# Afficher le FLAG
-print("FLAG :", flag.decode())
+# Print the flag
+print("FLAG:", flag.decode())
 ```
 
 ---
 
-### **5. Résultat**
-Après exécution du script, le FLAG est :
+## Results
+
+### Decrypted Flag
+After running the script, the decrypted flag is:
 ```
-FLAG : HTB{ChaCha20_Stream_Encryption}
+FLAG: HTB{ChaCha20_Stream_Encryption}
 ```
 
 ---
 
-### **6. Remarques**
-Ce challenge démontre la vulnérabilité des algorithmes de chiffrement par flux lorsque :
-- Un texte clair partiel est connu par l’attaquant.
-- La clé ou le nonce est réutilisé ou divulgué.
+## Lessons Learned
+
+1. **Understanding Stream Ciphers**:
+   - Learned how stream ciphers like ChaCha20 encrypt data by XORing plaintext with a generated keystream.
+   - Explored vulnerabilities when plaintext data is partially known.
+
+2. **XOR Operations**:
+   - Reinforced the use of XOR for encryption and decryption.
+   - Practiced Python operations for calculating XOR between byte sequences.
+
+3. **Python Skills**:
+   - Used Python's `bytes.fromhex()` to convert hexadecimal strings.
+   - Applied `zip()` and list comprehensions for pairwise operations on sequences.
 
 ---
 
-## **7. Apprentissage**
+## Repository Structure
 
-### **Compétences techniques acquises**
-1. **Compréhension de ChaCha20 :**
-   - Algorithme de chiffrement par flux (stream cipher).
-   - XOR utilisé pour combiner le texte clair avec une clé de flux.
+```
+├── decrypt.py        # Python script for decryption
+├── out.txt           # Provided ciphertext and nonce
+└── README.md         # This write-up
+```
 
-2. **XOR dans le déchiffrement :**
-   - Utilisation des propriétés du XOR pour :
-     - Reconstituer une clé de flux.
-     - Déchiffrer des données à partir de textes chiffrés.
+---
 
-3. **Manipulation de données en Python :**
-   - Conversion de données hexadécimales (`bytes.fromhex`).
-   - Calculs avec des listes et des compréhensions Python (`zip`, `[p ^ c for p, c in zip(...)]`).
+## How to Run
 
-4. **Structuration d’un script :**
-   - Charger des données depuis un fichier.
-   - Décomposer un problème en étapes (extraction, calcul, affichage).
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/your-username/repo-name.git
+   cd repo-name
+   ```
 
+2. **Run the decryption script**:
+   ```bash
+   python3 decrypt.py
+   ```
+
+3. **Output**:
+   The decrypted flag will be printed to the console.
+
+---
+
+## References
+
+- [ChaCha20 - Wikipedia](https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant)
+- [Python Bytes Documentation](https://docs.python.org/3/library/stdtypes.html#bytes)
+- [Cryptography Basics](https://crypto.stackexchange.com/)
+
+---
+
+### Challenge Completed Successfully
+```
