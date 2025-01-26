@@ -109,33 +109,7 @@ FLAG: HTB{ChaCha20_Stream_Encryption}
 
 ---
 
-## Repository Structure
 
-```
-├── decrypt.py        # Python script for decryption
-├── out.txt           # Provided ciphertext and nonce
-└── README.md         # This write-up
-```
-
----
-
-## How to Run
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/your-username/repo-name.git
-   cd repo-name
-   ```
-
-2. **Run the decryption script**:
-   ```bash
-   python3 decrypt.py
-   ```
-
-3. **Output**:
-   The decrypted flag will be printed to the console.
-
----
 
 ## References
 
