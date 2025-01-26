@@ -8,7 +8,7 @@
 ## 🎯 Challenge Overview
 - **Challenge Name:** Baby Encryption  
 - **Category:** Cryptography  
-- **Difficulty:** Easy  
+- **Difficulty:** Very Easy 
 - **Objective:** Decrypt a message encrypted with a modular arithmetic formula.
 
 ---
