@@ -74,7 +74,8 @@ print("Decrypted Message:", plaintext)
 
 ### 📬 Decrypted Message
 
-![Decrypted Message](./Challenge/Crypto/Images/VeryEasy/Images/image.png)
+![Decrypted Message](../VeryEasy/Images/image.png)
+
 
 
 ### 🔍 Observations
