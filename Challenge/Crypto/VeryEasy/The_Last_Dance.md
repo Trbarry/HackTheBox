@@ -4,7 +4,7 @@
 ## Challenge Overview
 - **Challenge Name:** The Last Dance  
 - **Category:** Cryptography  
-- **Difficulty:** Medium  
+- **Difficulty:** Very easy
 - **Objective:** Decrypt a flag encrypted using the ChaCha20 stream cipher.
 
 ---
