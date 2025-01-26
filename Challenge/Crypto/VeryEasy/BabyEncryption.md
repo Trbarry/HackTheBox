@@ -73,9 +73,9 @@ print("Decrypted Message:", plaintext)
 ## ✅ Results
 
 ### 📬 Decrypted Message
-```plaintext
+
 ![Decrypted Message](./Challenge/Crypto/Images/VeryEasy/Images/image.png)
-```
+
 
 ### 🔍 Observations
 - The message is coherent and readable.
